@@ -1,0 +1,6 @@
+GET https://worker360.electrosoftware.net:3000/supervision/last_five_tipo_dano HTTP/1.1
+content-type: application/json
+
+###
+GET https://worker360.electrosoftware.net:3000/supervision/last_five_tipo_fuente HTTP/1.1
+content-type: application/json

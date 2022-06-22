@@ -44,15 +44,20 @@ const GetData = (collection) => {
     redirect: "follow",
   };
 
-  fetch("url/api/" + collection, requestOptions)
+  fetch("https://worker360.electrosoftware.net:3000/supervision/last_five_" + collection, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      //   console.log(result);
-      // console.log(createSeriesArray(result));
-      options.series = createSeriesArray(result);
+        console.log(result);
+      console.log(createNewSeriesArray(result));
+      let data = createNewSeriesArray(result);
+      $('#sparklinedash_0').sparkline(data['cancelados'], config)
+      $('#sparklinedash_1').sparkline(data['recibidos'], config)
+      $('#sparklinedash_2').sparkline(data['reparados'], config)
+      $('#sparklinedash_3').sparkline(data['asignados'], config)
+      // options.series = createSeriesArray(result);
 
-      var chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
+      // var chart = new ApexCharts(document.querySelector("#chart"), options);
+      // chart.render();
     })
     .catch((error) => console.log("error", error));
 };
@@ -61,15 +66,28 @@ const GetData = (collection) => {
 //GetData('tipo_fuente');
 //GetData('cuadrillas');
 
+const createNewSeriesArray = (arrayData) => {
+  let series = {};
+  const innerData = arrayData.map((element) => element.data);
+  //return innerData
+  console.log(getNames(innerData[0]))
+  getNames(innerData[0]).forEach((name) => {
+      series[name]=getValue(name, innerData)
+  });
+
+  //console.log(series);
+  return series;
+};
+
 const createSeriesArray = (arrayData) => {
   let series = [];
   const innerData = arrayData.map((element) => element.data);
   //return innerData
-  //console.log(getNames(innerData[0]))
+  console.log(getNames(innerData[0]))
   //   console.log(innerData);
   //console.log('recibidos', getValue('recibidos', innerData))
   getNames(innerData[0]).forEach((name) => {
-    if (["recibidos", "asignados", "cancelados"].includes(name)) {
+    if (!["reparados"].includes(name)) {
       series.push({
         name: name,
         data: getValue(name, innerData),
